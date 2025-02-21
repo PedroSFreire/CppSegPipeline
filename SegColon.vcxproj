@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\vc\vcpkg\installed\x64-windows\include;C:\vc\vcpkg\installed\x64-windows\include\ITK-5.4;C:\vc\vcpkg\installed\x64-windows\include\vxl;C:\vc\vcpkg\installed\x64-windows\include\vxl\vcl;C:\vc\vcpkg\installed\x64-windows\include\vxl\core</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\vc\vcpkg\installed\x64-windows\include;C:\vc\vcpkg\installed\x64-windows\include\ITK-5.4;C:\vc\vcpkg\installed\x64-windows\include\vxl;C:\vc\vcpkg\installed\x64-windows\include\vxl\vcl;C:\vc\vcpkg\installed\x64-windows\include\vxl\core;C:\vc\vcpkg\buildtrees\itk\src\v5.4.0-78d745830f.clean\Modules\Nonunit\Review\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -129,7 +129,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CCLAlgo.cpp" />
+    <ClCompile Include="ITKHandler.cpp" />
     <ClCompile Include="SegColon.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CCLAlgo.h" />
+    <ClInclude Include="ITKIncludes.h" />
+    <ClInclude Include="ITKHandler.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SegColon.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
