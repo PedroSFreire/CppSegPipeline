@@ -106,6 +106,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\vc\vcpkg\installed\x64-windows\include;C:\vc\vcpkg\installed\x64-windows\include\ITK-5.4;C:\vc\vcpkg\installed\x64-windows\include\vxl;C:\vc\vcpkg\installed\x64-windows\include\vxl\vcl;C:\vc\vcpkg\installed\x64-windows\include\vxl\core;C:\vc\vcpkg\buildtrees\itk\src\v5.4.0-78d745830f.clean\Modules\Nonunit\Review\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <CompileAsManaged>false</CompileAsManaged>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -21,8 +21,8 @@
 
 	void CCLAlgo::addVoxelToCC(int id, int minVal) {
 
-		ccMap[minVal]->voxels.push(id);
-		ccMap[minVal]->size++;
+		ccVec[minVal-1]->voxels.push_back(id);
+		ccVec[minVal - 1]->size++;
 
 	}
 
@@ -80,9 +80,9 @@
 						connected = true;
 						struct ccData* newCC = new ccData;
 						newCC->label = label;
-						newCC->voxels.push(id);
+						newCC->voxels.push_back(id);
 						newCC->size++;
-						ccMap[label] = newCC;
+						ccVec.push_back(newCC);
 
 					}
 					else {

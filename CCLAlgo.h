@@ -9,13 +9,12 @@ public:
 	struct ccData {
 		int label;
 		int size=0;
-		std::stack<int> voxels;
+		std::vector<int> voxels;
 	};
 
 	int* imageBuffer;
 	int xSize, ySize, zSize;
-	std::unordered_map<int, ccData*> ccMap;
-
+	std::vector<ccData*> ccVec;
 	
 
 
