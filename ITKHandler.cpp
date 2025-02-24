@@ -42,6 +42,7 @@ void ITKHandler::setupSmallCCRemove() {
 }
 
 void ITKHandler::setupFilters(std::string filename) {
+	itk::NiftiImageIOFactory::RegisterOneFactory();
 	setupReader(filename);
 	setupWriter(filename);
 	setupThresholdFilter();
@@ -52,15 +53,17 @@ void ITKHandler::setupFilters(std::string filename) {
 void ITKHandler::setupPipeline() {
 	// Pipeline setup
 	thresholdFilter->SetInput(reader->GetOutput());
-	ccFilter->SetInput(thresholdFilter->GetOutput());
-	relabelFilter->SetInput(ccFilter->GetOutput());
-	writer->SetInput(relabelFilter->GetOutput());
+	//ccFilter->SetInput(thresholdFilter->GetOutput());
+	//relabelFilter->SetInput(ccFilter->GetOutput());
+	//writer->SetInput(relabelFilter->GetOutput());
+
 }
 
 void ITKHandler::runPipeline() {
 	// Run the pipeline
 	try {
-		writer->Update();
+		//writer->Update();
+		thresholdFilter->Update();
 	}
 	catch (itk::ExceptionObject& err) {
 		std::cerr << "Error writing file: " << err << std::endl;
