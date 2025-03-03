@@ -7,23 +7,25 @@ class CCLAlgo
 {
 public:
 	struct ccData {
-		int label;
 		int size=0;
 		std::vector<int> voxels;
 	};
 
+	int   objCount;
 	int* imageBuffer;
 	int xSize, ySize, zSize;
-	std::vector<ccData*> ccVec;
+	std::vector<ccData> ccVec;
+	std::vector<ccData> f_ccVec;
+
 	
 
 
-	CCLAlgo(int* imageBuffer, int x, int y, int z);
+	CCLAlgo(int* imageBuffer,int count, int x, int y, int z);
 	void runCCL();
-	void addVoxelToCC(int id, int minVal);
-	void runSmallCCRemove(int minSize);
+	void removeUnwantedAirCC(int minSize);
+	void removeSmallCC(int minSize);
+	void removeCC(int id);
 	int  getIdFromPos(int x, int y, int z);
-	int  firstPass();
 };
 #endif
 

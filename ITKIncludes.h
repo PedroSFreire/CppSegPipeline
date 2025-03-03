@@ -13,6 +13,8 @@
 #include <itkCastImageFilter.h>
 #include <itkLabelImageToShapeLabelMapFilter.h>
 #include <itkLabelStatisticsImageFilter.h>
+#include "itkNeighborhoodOperatorImageFilter.h"
+#include "itkSobelOperator.h"
 
 using ImageType = itk::Image<INT32, 3>;
 
