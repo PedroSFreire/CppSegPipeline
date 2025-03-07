@@ -2,6 +2,7 @@
 #define ITKHandler_H
 #include <string>
 #include "ITKIncludes.h"
+#include "ManualSobel.h"
 
 class ITKHandler
 {

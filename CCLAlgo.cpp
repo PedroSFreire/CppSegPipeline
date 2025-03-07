@@ -28,7 +28,6 @@
 
 
 
-
 	void CCLAlgo::runCCL() {
 		// CCL Algorithm
 		int id, val;

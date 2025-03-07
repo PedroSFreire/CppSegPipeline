@@ -133,12 +133,14 @@
   <ItemGroup>
     <ClCompile Include="CCLAlgo.cpp" />
     <ClCompile Include="ITKHandler.cpp" />
+    <ClCompile Include="ManualSobel.cpp" />
     <ClCompile Include="SegColon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCLAlgo.h" />
     <ClInclude Include="ITKIncludes.h" />
     <ClInclude Include="ITKHandler.h" />
+    <ClInclude Include="ManualSobel.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
