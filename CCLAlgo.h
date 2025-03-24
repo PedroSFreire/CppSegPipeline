@@ -26,6 +26,8 @@ public:
 	void removeSmallCC(int minSize);
 	void removeCC(int id);
 	int  getIdFromPos(int x, int y, int z);
+	void expandLabels();
+
 };
 #endif
 

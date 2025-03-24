@@ -6,6 +6,7 @@
 
 class ITKHandler
 {
+
 public:
 
 	using ReaderType = itk::ImageFileReader<ImageType>;
@@ -26,6 +27,32 @@ public:
 	SobelOperatorType sobelZOperator;
 	SobelFilterType::Pointer sobelZFilter = SobelFilterType::New();
 
+	using HistogramFilterType = itk::HistogramMatchingImageFilter<ImageType, ImageType>;
+	HistogramFilterType::Pointer histogramFilter;
+
+
+	using AnisotropicFilterType = itk::GradientAnisotropicDiffusionImageFilter<ImageFloatType, ImageFloatType>;
+	AnisotropicFilterType::Pointer diffusionFilter;
+
+	//using AnisotropicFilterType = itk::GPUGradientAnisotropicDiffusionImageFilter<ImageFloatType, ImageFloatType>;
+	//AnisotropicFilterType::Pointer diffusionFilter;
+
+
+
+	using ClampFilterType = itk::ClampImageFilter<ImageType, ImageType>;
+	ClampFilterType::Pointer clampFilter;
+
+	using CastFilterToFloatType = itk::CastImageFilter<ImageType, ImageFloatType>;
+	CastFilterToFloatType::Pointer CastFilterToFloat;
+
+
+	using CastFilterToIntType = itk::CastImageFilter<ImageFloatType, ImageType>;
+	CastFilterToIntType::Pointer CastFilterToInt;
+
+
+	using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
+	RescaleFilterType::Pointer rescaleFilter;
+
 	ITKHandler();
 	void setupReader(std::string filename);
 	int getObjCount();
@@ -37,5 +64,13 @@ public:
 	void setupPipeline();
 	void runPipelineAir();
 	void runPipelineFlats(ImageType::Pointer img);
+	void clampSetup();
+	void setupFilterPipeline(std::string filename);
+
+	// **Step 2: Histogram Normalization**
+	void histogramFilterSetup(ImageType::Pointer& image);
+
+	// **Step 3: Anisotropic Diffusion**
+	void anisotropicSetup();
 };
 #endif

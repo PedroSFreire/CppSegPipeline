@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\vc\vcpkg\installed\x64-windows\include;C:\vc\vcpkg\installed\x64-windows\include\ITK-5.4;C:\vc\vcpkg\installed\x64-windows\include\vxl;C:\vc\vcpkg\installed\x64-windows\include\vxl\vcl;C:\vc\vcpkg\installed\x64-windows\include\vxl\core;C:\vc\vcpkg\buildtrees\itk\src\v5.4.0-78d745830f.clean\Modules\Nonunit\Review\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\vc\vcpkg\installed\x64-windows\include;C:\vc\vcpkg\installed\x64-windows\include\ITK-5.4;C:\vc\vcpkg\installed\x64-windows\include\vxl;C:\vc\vcpkg\installed\x64-windows\include\vxl\vcl;C:\vc\vcpkg\installed\x64-windows\include\vxl\core;C:\vc\vcpkg\buildtrees\itk\src\v5.4.0-78d745830f.clean\Modules\Nonunit\Review\include;C:\vc\vcpkg\installed\x64-windows\include\opencv4</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <CompileAsManaged>false</CompileAsManaged>
       <OpenMPSupport>true</OpenMPSupport>

@@ -57,13 +57,47 @@
 	}
 
 	void CCLAlgo::removeSmallCC(int minSize) {
-		for (int i = 0; i < objCount + 1; i++) {
+		for (int i = 0; i < objCount; i++) {
 			if (ccVec[i].size < minSize) {
 				removeCC(i);
 				ccVec[i].size = 0;
 			}
 		}
 
+	}
+
+
+
+	void CCLAlgo::expandLabels() {
+//#pragma omp parallel for num_threads(16)
+		for (int i = 0; i < objCount ; i++) {
+			if (ccVec[i].size == 0)
+				continue;
+			std::vector<int> voxels;
+			int counts=0;
+			for( int voxel = 0; voxel< ccVec[i].size;voxel++) {
+				int x, y, z;
+				idToPos(&x, &y, &z, ccVec[i].voxels[voxel], xSize, ySize, zSize);
+				int aboveVoxel = getIdFromPos(x, y + 1, z);
+				int belowVoxel = getIdFromPos(x, y - 1, z);
+				if(z>1 && z< zSize-1)
+					if (imageBuffer[aboveVoxel] == 0) {
+						imageBuffer[aboveVoxel] = i;
+						++counts;
+						voxels.push_back(aboveVoxel);
+					}
+				if (z > 1 && z < zSize - 1)
+					if (imageBuffer[belowVoxel] == 0) {
+						imageBuffer[belowVoxel] = i;
+						++counts;
+						voxels.push_back(belowVoxel);
+					}
+			}
+//#pragma omp critical
+			ccVec[i].voxels.insert(ccVec[i].voxels.end(), voxels.begin(), voxels.end());
+//#pragma omp critical
+			ccVec[i].size += counts;
+		}
 	}
 
 
