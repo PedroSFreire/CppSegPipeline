@@ -3,6 +3,7 @@
 
 #include "itkImageFileReader.h"
 #include "itkImage.h"
+#include "itkMultiThreaderBase.h"
 #include "itkImageIOFactory.h"
 #include "itkNiftiImageIOFactory.h"
 #include <filesystem>
@@ -14,7 +15,18 @@
 #include <itkLabelImageToShapeLabelMapFilter.h>
 #include <itkLabelStatisticsImageFilter.h>
 
-using ImageType = itk::Image<INT32, 3>;
+#include "itkNeighborhoodOperatorImageFilter.h"
+#include "itkSobelOperator.h"
+#include "itkClampImageFilter.h"
+#include "itkHistogramMatchingImageFilter.h"
+#include "itkGradientAnisotropicDiffusionImageFilter.h"
+
+#include "itkRescaleIntensityImageFilter.h"
+
+
+using ImageType = itk::Image<int, 3>;
+using ImageFloatType = itk::Image<float, 3>;
+
 
 
 

@@ -1,9 +1,9 @@
-#ifndef CCLAlgo_H
-#define CCLAlgo_H
+#ifndef CCLAlgoBase_H
+#define CCLAlgoBase_H
 #include <string>
 #include <stack>
 #include "ITKIncludes.h"
-class CCLAlgo
+class CCLAlgoBase 
 {
 public:
 	struct ccData {
@@ -20,13 +20,14 @@ public:
 	
 
 
-	CCLAlgo(int* imageBuffer,int count, int x, int y, int z);
+	CCLAlgoBase(int* imageBuffer,int count, int x, int y, int z);
 	void runCCL();
-	void removeUnwantedAirCC(int minSize);
-	void removeSmallCC(int minSize);
+	void idToPos(int* x, int* y, int* z, int id, int xSize, int ySize, int zSize);
+	void removeSmallCC(const  int minSize);
+	void removeBigCC(int maxSize);
 	void removeCC(int id);
 	int  getIdFromPos(int x, int y, int z);
-	void expandLabels();
+
 
 };
 #endif
