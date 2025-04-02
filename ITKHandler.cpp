@@ -4,7 +4,7 @@
 #include <vector>
 #include <omp.h>
 #include <chrono>
-
+#include "GPUAnisotropic.h"
 #include <opencv2/opencv.hpp>
 
 //builder
@@ -14,6 +14,9 @@ ITKHandler::ITKHandler() {
 void ITKHandler::setupReader(std::string filename) {
 	reader = ReaderType::New();
 	reader->SetFileName(filename);
+	readerOg = ReaderType::New();
+	readerOg->SetFileName(filename);
+	readerOg->Update();
 }
 void ITKHandler::setupWriter(std::string filename) {
 	writer = WriterType::New();
@@ -31,6 +34,15 @@ void ITKHandler::setupThresholdFilter() {
 	airThresholdFilter->SetUpperThreshold(-600);
 	airThresholdFilter->SetInsideValue(1);
 	airThresholdFilter->SetOutsideValue(0);
+
+
+	liquidThresholdFilter = ThresholdFilterType::New();
+
+	//Threshold filter setup
+
+	liquidThresholdFilter->SetLowerThreshold(210);
+	liquidThresholdFilter->SetInsideValue(1);
+	liquidThresholdFilter->SetOutsideValue(0);
 }
 
 void ITKHandler::setupCCL() {
@@ -80,13 +92,7 @@ int getIdFromPos(int x, int y, int z,int xSize, int ySize) {
 	return z * ySize * xSize + y * xSize + x;
 }
 
-int sobelX(ImageType::Pointer img, int x,int y,int z) {
-	return 1;
-}
 
-int sobelZ(ImageType::Pointer img, int x, int y, int z) {
-	return 1;
-}
 
 float computeWeight(float center, float neighbor) {
 	float diff = center - neighbor;
@@ -170,6 +176,9 @@ void ITKHandler::runPipelineFlats(ImageType::Pointer img) {
 	ManualSobel *sobelOp = new ManualSobel();
 	int* buffer = img->GetBufferPointer();
 	solImg->SetRegions(img->GetLargestPossibleRegion());
+	//solImg->SetSpacing(img->GetSpacing());       // Copy voxel size
+	solImg->SetOrigin(img->GetOrigin());         // Copy world-space origin
+	//solImg->SetDirection(img->GetDirection());
 	solImg->Allocate();
 	solImg->FillBuffer(0);
 	int* sol = solImg->GetBufferPointer();
@@ -179,11 +188,11 @@ void ITKHandler::runPipelineFlats(ImageType::Pointer img) {
 	
 	itk::Size<3> imgSize = img->GetLargestPossibleRegion().GetSize();
 	int xSize = imgSize[0], ySize = imgSize[1], zSize = imgSize[2];
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-#pragma omp parallel for num_threads(16)
-	for (int i = 0; i < xSize; i++) {
+
+
+	for (int k = 0; k < zSize; k++) {
 		for (int j = 0; j < ySize; j++) {
-			for (int k = 0; k < zSize; k++) {
+			for (int i = 0; i < xSize; i++) {
 				int idx = getIdFromPos(i, j, k, xSize, ySize);
 				//int aboveIDX = getIdFromPos(i+1, j, k, xSize, ySize);
 				//int belowIDX = getIdFromPos(i - 1, j, k, xSize, ySize);
@@ -199,23 +208,31 @@ void ITKHandler::runPipelineFlats(ImageType::Pointer img) {
 					if (length > 0)
 						sobel = { sobelXV / length , sobelYV / length , sobelZV / length };
 
-					if (std::inner_product(std::begin(sobel), std::end(sobel), std::begin(down), 0) > 0.7 && length > 0) {
+					if (std::inner_product(std::begin(sobel), std::end(sobel), std::begin(down), 0) > 0.4 && length > 0 && sobel[0] < 0.3 && sobel[0] >-0.3 && sobel[2] < 0.3 && sobel[2] >-0.3) {
+						int topId = getIdFromPos(i, j + 1, k, xSize, ySize);
+						int botId = getIdFromPos(i, j - 1, k, xSize, ySize);
+						int botId2 = getIdFromPos(i, j + 2, k, xSize, ySize);
+						int botId3 = getIdFromPos(i, j + 3, k, xSize, ySize);
+						int botId4 = getIdFromPos(i, j + 4, k, xSize, ySize);
+
+						sol[topId] = 1;
+						sol[botId2] = 1;
+						//sol[botId3] = 1;
+
+
+
 
 						sol[idx] = 1;
 					}
-					else sol[idx] = 0;
+					
 				}
-				else {
-					sol[idx] = 0;
-				}
+				
 			}
 		}
 	}
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	std::cout << "time to sobel = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
-		ccFilter->SetInput(solImg);
-		ccFilter->Update();
+	ccFilter->SetInput(solImg);
+	ccFilter->Update();
 }
 
 
@@ -246,9 +263,9 @@ void ITKHandler::histogramFilterSetup(ImageType::Pointer& image) {
 // **Step 3: Anisotropic Diffusion**
 void ITKHandler::anisotropicSetup() {
 	diffusionFilter = AnisotropicFilterType::New();
-	diffusionFilter->SetNumberOfIterations(2);  // niter=15
+	diffusionFilter->SetNumberOfIterations(15);  // niter=15
 	diffusionFilter->SetTimeStep(0.04);          // gamma=0.12
-	diffusionFilter->SetConductanceParameter(60); // kappa=55
+	diffusionFilter->SetConductanceParameter(55); // kappa=55
 
 
 }
@@ -306,12 +323,16 @@ void runEqFilter(int* buffer, int sizeX, int sizeY, int sizeZ) {
 
 void ITKHandler::setupFilterPipeline(std::string filename) {
 	// Pipeline setup
+
 	ImageType::Pointer image;
 	ImageFloatType::Pointer floatImg;
 	writer->SetFileName("FilterStuff" + filename);
 	reader->Update();
 	image = reader->GetOutput();
+	writer->SetInput(image);
+	writer->Update();
 	itk::Size<3> imgSize = image->GetLargestPossibleRegion().GetSize();
+	GPUHandler GPUH =  GPUHandler(imgSize[0], imgSize[1], imgSize[2]);
 	clampFilter->SetInput(image);
 	rescaleFilter->SetInput(clampFilter->GetOutput());
 
@@ -343,7 +364,6 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 
 	CastFilterToFloat->SetInput(image);
 
-	CastFilterToFloat->Update();
 
 	begin = std::chrono::steady_clock::now();
 	CastFilterToFloat->Update();
@@ -351,28 +371,41 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 	std::cout << "int to float  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
 	floatImg = CastFilterToFloat->GetOutput();
-
-	diffusionFilter->SetInput(floatImg);
+	
+	//diffusionFilter->SetInput(floatImg);
 
 
 	begin = std::chrono::steady_clock::now();
-	diffusionFilter->Update();
-	//for(int rep = 0;rep<=2;rep++)
+	GPUH.run(floatImg->GetBufferPointer());
+	//diffusionFilter->Update();
+	//for(int rep = 0;rep<=10;rep++)
 	//	runAniFilter(floatImg->GetBufferPointer(), imgSize[0], imgSize[1], imgSize[2]);
 
 	end = std::chrono::steady_clock::now();
 	std::cout << "difussion  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
-	floatImg = diffusionFilter->GetOutput();
+	//floatImg = diffusionFilter->GetOutput();
 
 	CastFilterToInt->SetInput(floatImg);
-
-
-	begin = std::chrono::steady_clock::now();
 	CastFilterToInt->Update();
-	end = std::chrono::steady_clock::now();
-	std::cout << "to float = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
-	writer->SetFileName("FilterStuff" + filename);
+
+	liquidThresholdFilter->SetInput(CastFilterToInt->GetOutput());
+	liquidThresholdFilter->Update();
+
+
+	writer->SetFileName("PostAni" + filename);
 	writer->SetInput(CastFilterToInt->GetOutput());
+	writer->Update();
+
+	writer->SetFileName("FilterStuffbefore" + filename);
+	writer->SetInput(CastFilterToInt->GetOutput());
+	writer->Update();
+
+	ccFilter->SetInput(liquidThresholdFilter->GetOutput());
+	ccFilter->Update();
+
+
+	writer->SetFileName("FilterStuffAfter" + filename);
+	writer->SetInput(ccFilter->GetOutput());
 	writer->Update();
 }

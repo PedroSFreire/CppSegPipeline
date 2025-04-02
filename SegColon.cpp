@@ -3,7 +3,12 @@
 #include "ITKIncludes.h"
 #include <chrono>
 #include "ITKHandler.h"
-#include "CCLAlgo.h"
+
+#include "CCLAlgoBase.h"
+#include "CCLAlgoAir.h"
+#include "CCLAlgoFlatLabels.h"
+#include "CCLAlgoLiquidPockets.h"
+#include "CCLAlgoFinal.h"
 #include <future>
 #include <thread>
 
@@ -26,7 +31,7 @@ int main() {
     std::future<void> future = std::async(std::launch::async, &ITKHandler::setupFilterPipeline,&handler2, filename);
     
 
-    ImageType::Pointer airImg,flatImg;
+    ImageType::Pointer airImg,flatImg,finalImg;
 
 
 	int count = 0;
@@ -54,7 +59,7 @@ int main() {
         airImg = handler.ccFilter->GetOutput();
         airImg->DisconnectPipeline();
 		imgSize = airImg->GetLargestPossibleRegion().GetSize();
-        CCLAlgo AirCCL(airImg->GetBufferPointer(),handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
+        CCLAlgoAir AirCCL(airImg->GetBufferPointer(),handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
        
 		AirCCL.runCCL();
         
@@ -62,24 +67,74 @@ int main() {
 
 		handler.runPipelineFlats(airImg);
 
+        handler.writer->SetInput(airImg);
+        handler.writer->SetFileName("AirLabels" + filename);
+        handler.writer->Update();
+
+
+
 		flatImg = handler.ccFilter->GetOutput();
+
+
+
+
+
 		flatImg->DisconnectPipeline();
-        CCLAlgo flatCCL(flatImg->GetBufferPointer(), handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
+
+        CCLAlgoFlatLabels flatCCL(flatImg->GetBufferPointer(), handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2],handler.readerOg->GetOutput()->GetBufferPointer());
 
         flatCCL.runCCL();
-        flatCCL.removeSmallCC(30);
+        flatCCL.removeSmallCC(300);
 
-        flatCCL.expandLabels();
-
-
-
-        //handler.setupFilterPipeline(filename);
-        future.get();
-		handler2.writer->SetInput(handler2.CastFilterToInt->GetOutput());
-        handler2.writer->SetFileName("thisfile.nii");
-		handler2.writer->Update();
+        handler.writer->SetInput(flatImg);
+        handler.writer->SetFileName("FlatLabels" + filename);
+        handler.writer->Update();
+		
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "filter stack = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[µs]" << std::endl;
+        std::cout << "main stack = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[µs]" << std::endl;
+
+        future.get();
+
+
+        CCLAlgoLiquidPockets LiquidCCL(handler2.ccFilter->GetOutput()->GetBufferPointer(), handler2.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
+        LiquidCCL.runCCL();
+        LiquidCCL.removeSmallCC(5000);
+        LiquidCCL.removeBigCC(0.02 * imgSize[0]* imgSize[1]* imgSize[2]);
+
+
+        handler.writer->SetInput(handler2.ccFilter->GetOutput());
+        handler.writer->SetFileName("LiquidLabels" + filename);
+        handler.writer->Update();
+
+
+        LiquidCCL.intersectLabels(flatImg->GetBufferPointer(), airImg->GetBufferPointer(), flatCCL.objCount, AirCCL.objCount, flatCCL.ccVec,airImg->GetLargestPossibleRegion());
+        LiquidCCL.addValidCC();
+        AirCCL.addValidCC(LiquidCCL.airLabelsValid, LiquidCCL.finalImg->GetBufferPointer());
+        flatCCL.addValidCC(LiquidCCL.flatLabelsValid, LiquidCCL.finalImg->GetBufferPointer());
+
+		flatCCL.labelFinalExpansion(LiquidCCL.flatLabelsValid, LiquidCCL.finalImg->GetBufferPointer(), AirCCL.imageBuffer);
+        //LiquidCCL.liquidFinalExpansion(handler.reader->GetOutput()->GetBufferPointer());
+        
+
+
+        handler.writer->SetInput(flatImg);
+        handler.writer->SetFileName("FlatLabels2" + filename);
+        handler.writer->Update();
+
+
+		handler.ccFilter->SetInput(LiquidCCL.finalImg);
+		handler.ccFilter->Update();
+		finalImg = handler.ccFilter->GetOutput();
+        CCLAlgoFinal FinalCCL(finalImg->GetBufferPointer(), handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
+		FinalCCL.runCCL();
+
+        handler.writer->SetInput(finalImg);
+        handler.writer->SetFileName("FinalLabels" + filename);
+        handler.writer->Update();
+
+
+        end = std::chrono::steady_clock::now();
+        std::cout << "full stack = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[µs]" << std::endl;
 
 
 

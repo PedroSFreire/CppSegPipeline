@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\vc\vcpkg\installed\x64-windows\include;C:\vc\vcpkg\installed\x64-windows\include\ITK-5.4;C:\vc\vcpkg\installed\x64-windows\include\vxl;C:\vc\vcpkg\installed\x64-windows\include\vxl\vcl;C:\vc\vcpkg\installed\x64-windows\include\vxl\core;C:\vc\vcpkg\buildtrees\itk\src\v5.4.0-78d745830f.clean\Modules\Nonunit\Review\include;C:\vc\vcpkg\installed\x64-windows\include\opencv4</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vcpkg\installed\x64-windows\include;vcpkg\installed\x64-windows\include\ITK-5.4;vcpkg\installed\x64-windows\include\vxl;vcpkg\installed\x64-windows\include\vxl\vcl;vcpkg\installed\x64-windows\include\vxl\core;vcpkg\buildtrees\itk\src\v5.4.0-78d745830f.clean\Modules\Nonunit\Review\include;vcpkg\installed\x64-windows\include\opencv4</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <CompileAsManaged>false</CompileAsManaged>
       <OpenMPSupport>true</OpenMPSupport>
@@ -132,12 +132,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCLAlgo.cpp" />
+    <ClCompile Include="CCLAlgoAir.cpp" />
+    <ClCompile Include="CCLAlgoBase.cpp" />
+    <ClCompile Include="CCLAlgoFinal.cpp" />
+    <ClCompile Include="CCLAlgoFlatLabels.cpp" />
+    <ClCompile Include="CCLAlgoLiquidPockets.cpp" />
+    <ClCompile Include="GPUAnisotropic.cpp" />
     <ClCompile Include="ITKHandler.cpp" />
     <ClCompile Include="ManualSobel.cpp" />
     <ClCompile Include="SegColon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCLAlgo.h" />
+    <ClInclude Include="CCLAlgoAir.h" />
+    <ClInclude Include="CCLAlgoBase.h" />
+    <ClInclude Include="CCLAlgoFinal.h" />
+    <ClInclude Include="CCLAlgoFlatLabels.h" />
+    <ClInclude Include="CCLAlgoLiquidPockets.h" />
+    <ClInclude Include="GPUAnisotropic.h" />
     <ClInclude Include="ITKIncludes.h" />
     <ClInclude Include="ITKHandler.h" />
     <ClInclude Include="ManualSobel.h" />

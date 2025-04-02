@@ -11,8 +11,10 @@ public:
 
 	using ReaderType = itk::ImageFileReader<ImageType>;
 	ReaderType::Pointer reader;
+	ReaderType::Pointer readerOg;
 	using ThresholdFilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
 	ThresholdFilterType::Pointer airThresholdFilter;
+	ThresholdFilterType::Pointer liquidThresholdFilter;
 
 	using ConnectedComponentFilterType = itk::ConnectedComponentImageFilter<ImageType, ImageType>;
 	ConnectedComponentFilterType::Pointer ccFilter;

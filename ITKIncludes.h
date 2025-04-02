@@ -20,7 +20,7 @@
 #include "itkClampImageFilter.h"
 #include "itkHistogramMatchingImageFilter.h"
 #include "itkGradientAnisotropicDiffusionImageFilter.h"
-//#include "itkGPUGradientAnisotropicDiffusionImageFilter.h"
+
 #include "itkRescaleIntensityImageFilter.h"
 
 
