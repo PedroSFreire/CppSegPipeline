@@ -4,18 +4,9 @@ A pipeline developed for project Xavier for colon segmentation with the goal of 
 ![plot](./segmentedVsRepair2.png)
 
 ## Requirements
-To run this program, ensure you have the following Python libraries installed:
+Git for windows must be installed. Visual studio must have "Desktop development with C++" and "Windows 10 SDK" packages.
+To install run install.bat it probably needs to be executed twice as it will stop after installing vcpkg.
 
-- `nibabel`
-- `numpy`
-- `scipy`
-- `cv2`
-- `medpy`
-
-You can install these libraries using pip:
-```bash
-pip install nibabel numpy scipy opencv-python medpy
-```
 
 ## How It Works
 1. **Input**:
