@@ -4,8 +4,11 @@ A pipeline developed for project Xavier for colon segmentation with the goal of 
 ![plot](./segmentedVsRepair2.png)
 
 ## Requirements
-Git for windows must be installed. Visual studio must have "Desktop development with C++" and "Windows 10 SDK" packages.
-To install run install.bat it probably needs to be executed twice as it will stop after installing vcpkg.
+1- Git for windows must be installed.
+
+2- Visual studio must have "Desktop development with C++" and "Windows 10 SDK" packages.
+
+3- To install run install.bat it probably needs to be executed twice as it will stop after installing vcpkg.
 
 
 ## How It Works
