@@ -10,6 +10,8 @@ A pipeline developed for project Xavier for colon segmentation with the goal of 
 
 3- To install run install.bat it probably needs to be executed twice as it will stop after installing vcpkg.
 
+4- To run the program open the project in visual studio and execute it from the IDE.
+
 
 ## How It Works
 1. **Input**:
