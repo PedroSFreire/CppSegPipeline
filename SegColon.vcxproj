@@ -122,6 +122,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>vcpkg\installed\x64-windows\include\ITK-5.4;vcpkg\installed\x64-windows\include\opencv4;vcpkg\installed\x64-windows\include\vxl\vcl;vcpkg\installed\x64-windows\include\vxl\core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

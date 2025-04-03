@@ -67,9 +67,9 @@ int main() {
 
 		handler.runPipelineFlats(airImg);
 
-        handler.writer->SetInput(airImg);
-        handler.writer->SetFileName("AirLabels" + filename);
-        handler.writer->Update();
+        //handler.writer->SetInput(airImg);
+        //handler.writer->SetFileName("AirLabels" + filename);
+        //handler.writer->Update();
 
 
 
@@ -86,9 +86,9 @@ int main() {
         flatCCL.runCCL();
         flatCCL.removeSmallCC(300);
 
-        handler.writer->SetInput(flatImg);
-        handler.writer->SetFileName("FlatLabels" + filename);
-        handler.writer->Update();
+        //handler.writer->SetInput(flatImg);
+        //handler.writer->SetFileName("FlatLabels" + filename);
+        //handler.writer->Update();
 		
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::cout << "main stack = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[µs]" << std::endl;
@@ -102,9 +102,9 @@ int main() {
         LiquidCCL.removeBigCC(0.02 * imgSize[0]* imgSize[1]* imgSize[2]);
 
 
-        handler.writer->SetInput(handler2.ccFilter->GetOutput());
-        handler.writer->SetFileName("LiquidLabels" + filename);
-        handler.writer->Update();
+        //handler.writer->SetInput(handler2.ccFilter->GetOutput());
+        //handler.writer->SetFileName("LiquidLabels" + filename);
+        //handler.writer->Update();
 
 
         LiquidCCL.intersectLabels(flatImg->GetBufferPointer(), airImg->GetBufferPointer(), flatCCL.objCount, AirCCL.objCount, flatCCL.ccVec,airImg->GetLargestPossibleRegion());
@@ -117,9 +117,9 @@ int main() {
         
 
 
-        handler.writer->SetInput(flatImg);
-        handler.writer->SetFileName("FlatLabels2" + filename);
-        handler.writer->Update();
+       // handler.writer->SetInput(flatImg);
+        //handler.writer->SetFileName("FlatLabels2" + filename);
+        //handler.writer->Update();
 
 
 		handler.ccFilter->SetInput(LiquidCCL.finalImg);

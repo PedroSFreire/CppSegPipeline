@@ -326,11 +326,12 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 
 	ImageType::Pointer image;
 	ImageFloatType::Pointer floatImg;
-	writer->SetFileName("FilterStuff" + filename);
+	
 	reader->Update();
+	//writer->SetFileName("FilterStuff" + filename);
+	//writer->SetInput(image);
+	//writer->Update();
 	image = reader->GetOutput();
-	writer->SetInput(image);
-	writer->Update();
 	itk::Size<3> imgSize = image->GetLargestPossibleRegion().GetSize();
 	GPUHandler GPUH =  GPUHandler(imgSize[0], imgSize[1], imgSize[2]);
 	clampFilter->SetInput(image);
@@ -340,26 +341,26 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	rescaleFilter->Update();
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	std::cout << "clamp time = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
+	//std::cout << "clamp time = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
 
 	image = rescaleFilter->GetOutput();
 	histogramFilter->SetInput(image);
-	writer->SetFileName("rescaledmStuff" + filename);
-	writer->SetInput(image);
-	writer->Update();
+	//writer->SetFileName("rescaledmStuff" + filename);
+	//writer->SetInput(image);
+	//writer->Update();
 	begin = std::chrono::steady_clock::now();
 	//histogramFilter->Update();
 	runEqFilter(image->GetBufferPointer(), imgSize[0], imgSize[1], imgSize[2]);
 	end = std::chrono::steady_clock::now();
-	std::cout << "Histogram time = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
+	//std::cout << "Histogram time = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
 
 	//image = histogramFilter->GetOutput();
 	
-	writer->SetFileName("posthistogramStuff" + filename);
-	writer->SetInput(image);
-	writer->Update();
+	//writer->SetFileName("posthistogramStuff" + filename);
+	//writer->SetInput(image);
+	//writer->Update();
 
 
 	CastFilterToFloat->SetInput(image);
@@ -368,7 +369,7 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 	begin = std::chrono::steady_clock::now();
 	CastFilterToFloat->Update();
 	end = std::chrono::steady_clock::now();
-	std::cout << "int to float  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
+	//std::cout << "int to float  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
 	floatImg = CastFilterToFloat->GetOutput();
 	
@@ -382,7 +383,7 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 	//	runAniFilter(floatImg->GetBufferPointer(), imgSize[0], imgSize[1], imgSize[2]);
 
 	end = std::chrono::steady_clock::now();
-	std::cout << "difussion  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
+	//std::cout << "difussion  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
 	//floatImg = diffusionFilter->GetOutput();
 
@@ -393,19 +394,19 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 	liquidThresholdFilter->Update();
 
 
-	writer->SetFileName("PostAni" + filename);
-	writer->SetInput(CastFilterToInt->GetOutput());
-	writer->Update();
+	//writer->SetFileName("PostAni" + filename);
+	//writer->SetInput(CastFilterToInt->GetOutput());
+	//writer->Update();
 
-	writer->SetFileName("FilterStuffbefore" + filename);
-	writer->SetInput(CastFilterToInt->GetOutput());
-	writer->Update();
+	//writer->SetFileName("FilterStuffbefore" + filename);
+	//writer->SetInput(CastFilterToInt->GetOutput());
+	//writer->Update();
 
 	ccFilter->SetInput(liquidThresholdFilter->GetOutput());
 	ccFilter->Update();
 
 
-	writer->SetFileName("FilterStuffAfter" + filename);
-	writer->SetInput(ccFilter->GetOutput());
-	writer->Update();
+	//writer->SetFileName("FilterStuffAfter" + filename);
+	//writer->SetInput(ccFilter->GetOutput());
+	//writer->Update();
 }
