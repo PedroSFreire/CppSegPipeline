@@ -20,7 +20,7 @@ A pipeline developed for project Xavier for colon segmentation with the goal of 
 
 3. **Output**:
    - The processed output is written in the same directory as the `.py` script.
-   - The output file will have the same name as the input but will end with `_Seg.nii` instead of `.nii`.
+   - The output file will have the same name as the input but will start with `FinalLabel` currently it also prints other files for debug.
 
 ## Pipeline Overview
 
