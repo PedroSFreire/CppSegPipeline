@@ -17,6 +17,7 @@ public:
 	void addValidCC();
 	void intersectLabels(int* labelBuffer, int* airBuffer, int labelCount, int airCount, std::vector<ccData> flatLabels,itk::ImageRegion<3U> region);
 	void liquidFinalExpansion(int* airBuffer);
+	void run();
 };
 #endif
 

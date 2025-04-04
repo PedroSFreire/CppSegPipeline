@@ -219,18 +219,12 @@
 		}
 	}
 
-	/*void CCLAlgoFlatLabels::labelFinalExpansion(std::vector<int> validCC, int* finalBuffer, int* airBuffer) {
-		ManualSobel* sobelOp = new ManualSobel();
-		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < ySize; j++) {
-				for (int k = 0; k < zSize; k++) {
-					int idx = getIdFromPos(i, j, k);
-					imageBuffer[idx] = sobelOp->getSobelY(airBuffer, i, j, k, xSize, ySize, zSize);
 
-				}
-			}
-		}
-	}*/
+	void CCLAlgoFlatLabels::run() {
+		runCCL();
+		removeSmallCC(300);
+
+	}
 
 
 

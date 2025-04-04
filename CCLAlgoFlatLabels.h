@@ -24,6 +24,8 @@ public:
 	void regionExpansion(int id, int* finalBuffer, int* airBuffer);
 	void expandVoxel(int id, std::vector<int> &voxels, int* finalBuffer, int yMax, int yMin, int* airBuffer);
 	void expandVoxelUpwards(int id, std::vector<int> voxels, int* finalBuffer, int yMax, int yMin, int* airBuffer);
+
+	void run();
 };
 #endif
 

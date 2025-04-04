@@ -67,3 +67,10 @@
 			}
 		}
 	}
+
+
+	void CCLAlgoAir::run() {
+		runCCL();
+		removeUnwantedAirCC(5000);
+		
+	}

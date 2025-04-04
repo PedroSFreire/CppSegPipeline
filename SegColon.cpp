@@ -27,19 +27,16 @@ int main() {
 	handler.setupPipeline();
    
     handler2.setupFilters(filename);
-    //handler2.setupFilterPipeline(filename);
+    //Launch async thread
     std::future<void> future = std::async(std::launch::async, &ITKHandler::setupFilterPipeline,&handler2, filename);
     
-
+	//Init required images to hold each step of the pipeline
     ImageType::Pointer airImg,flatImg,finalImg;
 
-
-	int count = 0;
-    int num = 0;
     try {
         // Read the image
 
-
+		//runs initial air threshold and ccl
 		handler.runPipelineAir();
         
     }
@@ -59,13 +56,16 @@ int main() {
         airImg = handler.ccFilter->GetOutput();
         airImg->DisconnectPipeline();
 		imgSize = airImg->GetLargestPossibleRegion().GetSize();
-        CCLAlgoAir AirCCL(airImg->GetBufferPointer(),handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
-       
-		AirCCL.runCCL();
-        
-		AirCCL.removeUnwantedAirCC(5000);
 
+        CCLAlgoAir AirCCL(airImg->GetBufferPointer(),handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
+		//generates auxiliar structures from the labeled air images  and removes small and some selected components
+		AirCCL.run();
+        
+
+		//generates flat labels from the air image and then runs ccl on it
 		handler.runPipelineFlats(airImg);
+        flatImg = handler.ccFilter->GetOutput();
+        flatImg->DisconnectPipeline();
 
         //handler.writer->SetInput(airImg);
         //handler.writer->SetFileName("AirLabels" + filename);
@@ -73,18 +73,18 @@ int main() {
 
 
 
-		flatImg = handler.ccFilter->GetOutput();
+		
 
 
 
 
 
-		flatImg->DisconnectPipeline();
+		
 
         CCLAlgoFlatLabels flatCCL(flatImg->GetBufferPointer(), handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2],handler.readerOg->GetOutput()->GetBufferPointer());
+        //generates auxiliar structures from the labeled flat images  and removes small and some selected components
+        flatCCL.run();
 
-        flatCCL.runCCL();
-        flatCCL.removeSmallCC(300);
 
         //handler.writer->SetInput(flatImg);
         //handler.writer->SetFileName("FlatLabels" + filename);
@@ -97,23 +97,23 @@ int main() {
 
 
         CCLAlgoLiquidPockets LiquidCCL(handler2.ccFilter->GetOutput()->GetBufferPointer(), handler2.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
-        LiquidCCL.runCCL();
-        LiquidCCL.removeSmallCC(5000);
-        LiquidCCL.removeBigCC(0.02 * imgSize[0]* imgSize[1]* imgSize[2]);
-
+        //generates auxiliar structures from the labeled flat images  and removes small and some selected components
+        LiquidCCL.run();
 
         //handler.writer->SetInput(handler2.ccFilter->GetOutput());
         //handler.writer->SetFileName("LiquidLabels" + filename);
         //handler.writer->Update();
 
-
+        //intersect the labels from flat and liquid and filters all components 
         LiquidCCL.intersectLabels(flatImg->GetBufferPointer(), airImg->GetBufferPointer(), flatCCL.objCount, AirCCL.objCount, flatCCL.ccVec,airImg->GetLargestPossibleRegion());
         LiquidCCL.addValidCC();
         AirCCL.addValidCC(LiquidCCL.airLabelsValid, LiquidCCL.finalImg->GetBufferPointer());
         flatCCL.addValidCC(LiquidCCL.flatLabelsValid, LiquidCCL.finalImg->GetBufferPointer());
 
+
+		// does the final expansion of the flat labels aplied to only the valid labels
 		flatCCL.labelFinalExpansion(LiquidCCL.flatLabelsValid, LiquidCCL.finalImg->GetBufferPointer(), AirCCL.imageBuffer);
-        //LiquidCCL.liquidFinalExpansion(handler.reader->GetOutput()->GetBufferPointer());
+;
         
 
 
@@ -121,13 +121,16 @@ int main() {
         //handler.writer->SetFileName("FlatLabels2" + filename);
         //handler.writer->Update();
 
-
+		//run ccl in final label
 		handler.ccFilter->SetInput(LiquidCCL.finalImg);
 		handler.ccFilter->Update();
 		finalImg = handler.ccFilter->GetOutput();
         CCLAlgoFinal FinalCCL(finalImg->GetBufferPointer(), handler.getObjCount(), imgSize[0], imgSize[1], imgSize[2]);
+        //select on the colon component
 		FinalCCL.runCCL();
 
+
+        //print final label
         handler.writer->SetInput(finalImg);
         handler.writer->SetFileName("FinalLabels" + filename);
         handler.writer->Update();

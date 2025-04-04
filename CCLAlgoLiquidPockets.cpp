@@ -85,4 +85,12 @@
 			}
 		}
 	}
+
+
+	void CCLAlgoLiquidPockets::run() {
+		runCCL();
+		removeSmallCC(5000);
+		removeBigCC(0.02 * xSize * ySize * zSize);
+
+	}
 	

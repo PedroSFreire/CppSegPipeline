@@ -326,87 +326,40 @@ void ITKHandler::setupFilterPipeline(std::string filename) {
 
 	ImageType::Pointer image;
 	ImageFloatType::Pointer floatImg;
-	
-	reader->Update();
-	//writer->SetFileName("FilterStuff" + filename);
-	//writer->SetInput(image);
-	//writer->Update();
-	image = reader->GetOutput();
-	itk::Size<3> imgSize = image->GetLargestPossibleRegion().GetSize();
-	GPUHandler GPUH =  GPUHandler(imgSize[0], imgSize[1], imgSize[2]);
-	clampFilter->SetInput(image);
+
+	//run clamp histogram and rescale filters
+	clampFilter->SetInput(reader->GetOutput());
 	rescaleFilter->SetInput(clampFilter->GetOutput());
-
-
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	rescaleFilter->Update();
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	//std::cout << "clamp time = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
-
-
 	image = rescaleFilter->GetOutput();
-	histogramFilter->SetInput(image);
-	//writer->SetFileName("rescaledmStuff" + filename);
-	//writer->SetInput(image);
-	//writer->Update();
-	begin = std::chrono::steady_clock::now();
-	//histogramFilter->Update();
+
+	// get image size and setup for gpu
+	itk::Size<3> imgSize = image->GetLargestPossibleRegion().GetSize();
+	GPUHandler GPUH = GPUHandler(imgSize[0], imgSize[1], imgSize[2]);
+
+
+	//Custom histigram normalization
 	runEqFilter(image->GetBufferPointer(), imgSize[0], imgSize[1], imgSize[2]);
-	end = std::chrono::steady_clock::now();
-	//std::cout << "Histogram time = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
 
-	//image = histogramFilter->GetOutput();
-	
-	//writer->SetFileName("posthistogramStuff" + filename);
-	//writer->SetInput(image);
-	//writer->Update();
-
-
+	//convert to float for better ani filter may not be required but it is fast enouph to not matter
 	CastFilterToFloat->SetInput(image);
-
-
-	begin = std::chrono::steady_clock::now();
 	CastFilterToFloat->Update();
-	end = std::chrono::steady_clock::now();
-	//std::cout << "int to float  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
-
 	floatImg = CastFilterToFloat->GetOutput();
-	
-	//diffusionFilter->SetInput(floatImg);
 
 
-	begin = std::chrono::steady_clock::now();
+
+	//gpu anisotropic diffusion
 	GPUH.run(floatImg->GetBufferPointer());
-	//diffusionFilter->Update();
-	//for(int rep = 0;rep<=10;rep++)
-	//	runAniFilter(floatImg->GetBufferPointer(), imgSize[0], imgSize[1], imgSize[2]);
 
-	end = std::chrono::steady_clock::now();
-	//std::cout << "difussion  = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[탎]" << std::endl;
 
-	//floatImg = diffusionFilter->GetOutput();
-
+	//convert back to int for ccl
 	CastFilterToInt->SetInput(floatImg);
 	CastFilterToInt->Update();
 
+	//threshold and ccl
 	liquidThresholdFilter->SetInput(CastFilterToInt->GetOutput());
-	liquidThresholdFilter->Update();
-
-
-	//writer->SetFileName("PostAni" + filename);
-	//writer->SetInput(CastFilterToInt->GetOutput());
-	//writer->Update();
-
-	//writer->SetFileName("FilterStuffbefore" + filename);
-	//writer->SetInput(CastFilterToInt->GetOutput());
-	//writer->Update();
-
 	ccFilter->SetInput(liquidThresholdFilter->GetOutput());
 	ccFilter->Update();
 
-
-	//writer->SetFileName("FilterStuffAfter" + filename);
-	//writer->SetInput(ccFilter->GetOutput());
-	//writer->Update();
 }

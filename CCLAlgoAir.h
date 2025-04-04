@@ -18,6 +18,7 @@ public:
 	//int  getIdFromPos(int x, int y, int z);
 	//void expandLabels();
 	void addValidCC(std::vector<int>, int* finalBuffer);
+	void run();
 };
 #endif
 
