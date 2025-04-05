@@ -3,6 +3,7 @@
 #include <string>
 #include <stack>
 #include "ITKIncludes.h"
+#include "defines.h"
 class CCLAlgoBase 
 {
 public:
@@ -10,7 +11,7 @@ public:
 		int size=0;
 		std::vector<int> voxels;
 	};
-
+	int volume;
 	int   objCount;
 	int* imageBuffer;
 	int xSize, ySize, zSize;

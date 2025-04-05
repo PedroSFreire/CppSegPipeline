@@ -133,7 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CCLAlgo.cpp" />
     <ClCompile Include="CCLAlgoAir.cpp" />
     <ClCompile Include="CCLAlgoBase.cpp" />
     <ClCompile Include="CCLAlgoFinal.cpp" />
@@ -141,20 +140,26 @@
     <ClCompile Include="CCLAlgoLiquidPockets.cpp" />
     <ClCompile Include="GPUAnisotropic.cpp" />
     <ClCompile Include="ITKHandler.cpp" />
+    <ClCompile Include="ITKHandlerAsync.cpp" />
+    <ClCompile Include="ITKHandlerMain.cpp" />
     <ClCompile Include="ManualSobel.cpp" />
+    <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="SegColon.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CCLAlgo.h" />
     <ClInclude Include="CCLAlgoAir.h" />
     <ClInclude Include="CCLAlgoBase.h" />
     <ClInclude Include="CCLAlgoFinal.h" />
     <ClInclude Include="CCLAlgoFlatLabels.h" />
     <ClInclude Include="CCLAlgoLiquidPockets.h" />
+    <ClInclude Include="defines.h" />
     <ClInclude Include="GPUAnisotropic.h" />
+    <ClInclude Include="ITKHandlerAsync.h" />
+    <ClInclude Include="ITKHandlerMain.h" />
     <ClInclude Include="ITKIncludes.h" />
     <ClInclude Include="ITKHandler.h" />
     <ClInclude Include="ManualSobel.h" />
+    <ClInclude Include="Pipeline.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

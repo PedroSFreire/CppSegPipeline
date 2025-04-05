@@ -11,7 +11,7 @@
 		xSize = x;
 		ySize = y;
 		zSize = z;
-
+		volume = xSize * ySize * zSize;
 		ccVec.resize(objCount+1);
 
 		ogImgBuffer = ogBuffer;
@@ -197,8 +197,8 @@
 			voxels.push_back(ccVec[id].voxels[voxel]);
 			
 		}
-		posY_max = +8;
-		posY_max -= 8;
+		posY_max = +LabelExpandBottom;
+		posY_max -= LabelExpandTop;
 		while (voxels.size()) {
 			int voxel = voxels.back();
 			voxels.pop_back();
@@ -222,7 +222,7 @@
 
 	void CCLAlgoFlatLabels::run() {
 		runCCL();
-		removeSmallCC(300);
+		removeSmallCC(FlatSizeMin);
 
 	}
 

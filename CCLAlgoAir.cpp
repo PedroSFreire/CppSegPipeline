@@ -11,7 +11,7 @@
 		xSize = x;
 		ySize = y;
 		zSize = z;
-
+		volume = xSize * ySize * zSize;
 		ccVec.resize(objCount+1);
 
 
@@ -71,6 +71,6 @@
 
 	void CCLAlgoAir::run() {
 		runCCL();
-		removeUnwantedAirCC(5000);
+		removeUnwantedAirCC(AirSizeMin* volume);
 		
 	}

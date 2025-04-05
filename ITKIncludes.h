@@ -19,13 +19,11 @@
 #include "itkSobelOperator.h"
 #include "itkClampImageFilter.h"
 #include "itkHistogramMatchingImageFilter.h"
-#include "itkGradientAnisotropicDiffusionImageFilter.h"
-
 #include "itkRescaleIntensityImageFilter.h"
 
 
-using ImageType = itk::Image<int, 3>;
-using ImageFloatType = itk::Image<float, 3>;
+
+
 
 
 

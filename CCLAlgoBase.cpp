@@ -11,7 +11,7 @@
 		xSize = x;
 		ySize = y;
 		zSize = z;
-
+		volume = xSize * ySize * zSize;
 		ccVec.resize(objCount);
 
 

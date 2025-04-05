@@ -11,7 +11,7 @@
 		xSize = x;
 		ySize = y;
 		zSize = z;
-
+		volume = xSize * ySize * zSize;
 		finalImg = ImageType::New();
 
 		ccVec.resize(objCount+1);
@@ -89,7 +89,7 @@
 
 	void CCLAlgoLiquidPockets::run() {
 		runCCL();
-		removeSmallCC(5000);
+		removeSmallCC(LiquidSizeMin * volume);
 		removeBigCC(0.02 * xSize * ySize * zSize);
 
 	}
