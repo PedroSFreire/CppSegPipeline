@@ -12,6 +12,8 @@ A pipeline developed for project Xavier for colon segmentation with the goal of 
 
 4- To run the program open the project in visual studio and execute it from the IDE.
 
+5- Additionally to run the .nii conversion scripts python and simpleITK need to be installed.
+
 
 ## How It Works
 1. **Input**:
@@ -23,6 +25,12 @@ A pipeline developed for project Xavier for colon segmentation with the goal of 
 3. **Output**:
    - The processed output is written in the same directory as the `.py` script.
    - The output file will have the same name as the input but will start with `FinalLabel` currently it also prints other files for debug.
+  
+
+## Convert dicom to .nii
+Run the included script using 
+python dicom_to_nifti.py /path/to/your/dicom/folder --output your_output.nii
+This needs simpleITk to be installed.
 
 ## Pipeline Overview
 
