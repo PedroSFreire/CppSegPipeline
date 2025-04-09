@@ -1,7 +1,7 @@
 #ifndef ITKHandlerAsync_H
 #define ITKHandlerAsync_H
 #include "ITKHandler.h"
-#include "GPUAnisotropic.h"
+#include "GPUHandler.h"
 #include <opencv2/opencv.hpp>
 
 
