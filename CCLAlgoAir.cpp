@@ -34,7 +34,7 @@
 		}
 
 		for (int i = 0; i < objCount; i++) {
-			if (count[i] > 20) {
+			if (count[i] > 100) {
 				removeCC(i);
 				ccVec[i].size = 0;
 			}
@@ -47,7 +47,7 @@
 			for (int j = 0; j < ySize; j++) {
 				int id = getIdFromPos(i, j, zSize-1);
 				if (imageBuffer[id] > 0) {
-					count[imageBuffer[id]]++;
+					count2[imageBuffer[id]]++;
 					//removeCC(imageBuffer[id]);
 					//ccVec[imageBuffer[id]].size = 0;
 				}
@@ -56,7 +56,7 @@
 
 
 		for (int i = 0; i < objCount; i++) {
-			if (count2[i] > 20) {
+			if (count2[i] > 100) {
 				removeCC(i);
 				ccVec[i].size = 0;
 			}
