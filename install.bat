@@ -27,6 +27,7 @@ echo Installing ITK, OpenCV, VLC, and VLC Core...
 "%VCPKG_DIR%\vcpkg" install opencv:x64-windows
 "%VCPKG_DIR%\vcpkg" install glew:x64-windows
 "%VCPKG_DIR%\vcpkg" install glfw3:x64-windows
+"%VCPKG_DIR%\vcpkg" integrate install
 
 echo All packages installed successfully!
 pause
