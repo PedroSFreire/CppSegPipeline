@@ -20,7 +20,7 @@
 
 	void CCLAlgoAir::removeUnwantedAirCC(int minSize) {
 		removeSmallCC(minSize);
-		std::vector<int> count( objCount,0);
+		std::vector<int> count( objCount + 1,0);
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				int id = getIdFromPos(i, j, 0);
@@ -33,14 +33,14 @@
 			}
 		}
 
-		for (int i = 0; i < objCount; i++) {
+		for (int i = 0; i < objCount + 1; i++) {
 			if (count[i] > 100) {
 				removeCC(i);
 				ccVec[i].size = 0;
 			}
 		}
 
-		std::vector<int> count2(objCount, 0);
+		std::vector<int> count2(objCount + 1, 0);
 
 
 		for (int i = 0; i < xSize; i++) {
@@ -55,7 +55,7 @@
 		}
 
 
-		for (int i = 0; i < objCount; i++) {
+		for (int i = 0; i < objCount + 1; i++) {
 			if (count2[i] > 100) {
 				removeCC(i);
 				ccVec[i].size = 0;
